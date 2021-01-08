@@ -4,12 +4,7 @@ import io from "socket.io-client";
 
 import Tile from "./Tile";
 
-let socket = io.connect("http://localhost:4000");
-
-if (process.env.NODE_ENV === "production") {
-  var proxy = require("socket.io-proxy");
-  socket = proxy.connect("http://https://shrouded-taiga-82868.herokuapp.com/");
-}
+let socket = io.connect();
 
 const Board = () => {
   const [player, setPlayer] = useState(null);
