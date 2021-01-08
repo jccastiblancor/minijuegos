@@ -4,13 +4,11 @@ import io from "socket.io-client";
 
 import Tile from "./Tile";
 
-const socket = io.connect("http://localhost:4000");
+let socket = io.connect("http://localhost:4000");
 
 if (process.env.NODE_ENV === "production") {
   var proxy = require("socket.io-proxy");
-  var socket = proxy.connect(
-    "http://https://shrouded-taiga-82868.herokuapp.com/"
-  );
+  socket = proxy.connect("http://https://shrouded-taiga-82868.herokuapp.com/");
 }
 
 const Board = () => {
