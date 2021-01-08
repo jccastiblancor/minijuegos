@@ -1,5 +1,11 @@
 const express = require("express");
 const app = express();
+const path = require("path");
+
+const PORT = process.env.PORT || 4000;
+app.use(express.static(path.join(__dirname, "../web/build")));
+app.set("port", PORT);
+
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 
@@ -23,16 +29,6 @@ io.on("connection", (socket) => {
   });
 });
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("../web/build"));
-
-  const path = require("path");
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "../web", "build", "index.html"));
-  });
-}
-
-const PORT = process.env.PORT || 4000;
 http.listen(PORT, function () {
   console.log(`listening on port ${PORT}`);
 });
