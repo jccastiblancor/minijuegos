@@ -1,0 +1,34 @@
+.box {
+  height: 60px;
+  font-size: 150%;
+  background-color: #b5915f;
+  text-align: center;
+  border-style: groove;
+}
+
+.clicked-tile {
+  background-color: #844b27;
+}
+.option-tile {
+  background-color: yellow;
+}
+.victory-tile {
+  background-color: green;
+}
+
+.peon {
+  margin-top: 10px;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.p1 {
+  background-color: red;
+}
+
+.p2 {
+  background-color: blue;
+}
