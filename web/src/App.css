@@ -77,3 +77,11 @@
   border-bottom-color: purple;
   border-bottom-style: solid;
 }
+
+.clickable {
+  color: green;
+  cursor: pointer;
+}
+.clickable:hover {
+  color: lightgreen;
+}

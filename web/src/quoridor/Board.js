@@ -288,7 +288,16 @@ const Board = () => {
           <p>You have {walls} walls left</p>
           <p>Rival have {totalWalls - walls} walls left</p>
 
-          {winner ? <p onClick={setGame}>Rematch</p> : null}
+          {winner ? (
+            <p onClick={setGame} className="clickable">
+              Rematch
+            </p>
+          ) : null}
+          {currentPlayer ? null : (
+            <p onClick={setGame} className="clickable">
+              You lost! Rematch
+            </p>
+          )}
         </Grid>
         <Grid item xs>
           {walls === 0 ? null : (
