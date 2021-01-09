@@ -6,6 +6,14 @@
   border-style: groove;
 }
 
+.hover-right-box:hover {
+  border-right-color: purple;
+}
+
+.hover-bottom-box:hover {
+  border-bottom-color: purple;
+}
+
 .clicked-tile {
   background-color: #844b27;
 }
@@ -31,4 +39,41 @@
 
 .p2 {
   background-color: blue;
+}
+
+.wall {
+  height: 120px;
+  width: 10px;
+  text-align: center;
+}
+
+.horizontal-wall {
+  height: 10px;
+  width: 120px;
+  text-align: center;
+}
+
+.select-wall {
+  border-style: solid;
+  border-color: yellow;
+}
+
+.wall-right {
+  border-right-color: purple;
+  border-right-style: solid;
+}
+
+.wall-left {
+  border-left-color: purple;
+  border-left-style: solid;
+}
+
+.wall-up {
+  border-top-color: purple;
+  border-top-style: solid;
+}
+
+.wall-down {
+  border-bottom-color: purple;
+  border-bottom-style: solid;
 }
