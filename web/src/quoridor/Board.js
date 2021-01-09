@@ -3,7 +3,6 @@ import Grid from "@material-ui/core/Grid";
 import io from "socket.io-client";
 
 import Tile from "./Tile";
-import Wall from "./Wall";
 
 let socket = io.connect();
 
@@ -12,6 +11,7 @@ const Board = () => {
   const [currentPlayer, setCurrentPlayer] = useState(null);
   const [board, setBoard] = useState(null);
   const [walls, setWalls] = useState(0);
+  const [totalWalls, setTotalWalls] = useState(0);
   const [winner, setWinner] = useState(null);
   const [wallToPlace, setWallToPlace] = useState(null);
 
@@ -35,6 +35,7 @@ const Board = () => {
     setBoard(copy);
     setWinner(null);
     setWalls(10);
+    setTotalWalls(20);
   };
 
   /**
@@ -42,11 +43,12 @@ const Board = () => {
    */
   const endGame = () => {
     setWinner(currentPlayer);
-    emitPlay(null);
+    emitPlay(null, totalWalls);
   };
 
   useEffect(() => {
-    socket.on("play", ({ currentPlayer, board }) => {
+    socket.on("play", ({ currentPlayer, board, walls }) => {
+      setTotalWalls(walls);
       setBoard(board);
       setCurrentPlayer(currentPlayer);
     });
@@ -63,8 +65,12 @@ const Board = () => {
    * sends movement to socket
    * @param {*} cPlayer current player
    */
-  const emitPlay = (cPlayer) => {
-    socket.emit("play", { currentPlayer: cPlayer, board: board });
+  const emitPlay = (cPlayer, walls) => {
+    socket.emit("play", {
+      currentPlayer: cPlayer,
+      board: board,
+      walls: walls,
+    });
     setCurrentPlayer(cPlayer);
   };
 
@@ -106,6 +112,18 @@ const Board = () => {
     setBoard(copy);
   };
 
+  const canMove = (direction, x, y) => {
+    switch (direction) {
+      case "up":
+        return ![1, 3, 5, 7, 9, 11, 13, 15].includes(board[x][y].wallBoard);
+      case "down":
+        return ![2, 3, 6, 7, 10, 11, 14, 15].includes(board[x][y].wallBoard);
+      case "left":
+        return ![4, 5, 6, 7, 12, 13, 14, 15].includes(board[x][y].wallBoard);
+      case "right":
+        return ![8, 9, 10, 11, 12, 13, 14, 15].includes(board[x][y].wallBoard);
+    }
+  };
   /**
    * Shows the posible movement options
    * @param {*} selected indicates if the peon was selected
@@ -115,32 +133,49 @@ const Board = () => {
   const readyToMove = (selected, x, y) => {
     let copy = [...board];
     if (selected) {
-      if (x > 0) {
-        if (copy[x - 1][y].board === 0 && x === 1 && currentPlayer === 2) {
-          copy[x - 1][y].board = 4;
-        }
-        if (copy[x - 1][y].board === 0) copy[x - 1][y].board = 3;
-        if (copy[x - 1][y].board === rival() && x > 1) copy[x - 2][y].board = 3;
-        if (
-          copy[x - 1][y].board === rival() &&
-          x === 2 &&
-          currentPlayer === 2
-        ) {
-          copy[x - 2][y].board = 4;
+      if (x > 0 && canMove("up", x, y)) {
+        if (copy[x - 1][y].board === rival()) {
+          // rival is up
+          if (canMove("up", x - 1, y)) {
+            if (x > 1) {
+              copy[x - 2][y].board = 3; //tile is free
+            }
+            if (x === 2 && currentPlayer === 2) {
+              copy[x - 2][y].board = 4; // winnig tile
+            }
+          } else if (canMove("right", x - 1, y) && y < 8) {
+            copy[x - 1][y + 1].board = 3; //tile is free
+          } else if (canMove("left", x - 1, y) && y > 0) {
+            copy[x - 1][y - 1].board = 3; //tile is free
+          }
+        } else {
+          if (copy[x - 1][y].board === 0 && x === 1 && currentPlayer === 2) {
+            copy[x - 1][y].board = 4; // winning tile
+          } else if (copy[x - 1][y].board === 0) {
+            copy[x - 1][y].board = 3; // tile is empty
+          }
         }
       }
-      if (x < 8) {
-        if (copy[x + 1][y].board === 0 && x === 7 && currentPlayer === 1) {
-          copy[x + 1][y].board = 4;
-        }
-        if (copy[x + 1][y].board === 0) copy[x + 1][y].board = 3;
-        if (copy[x + 1][y].board === rival() && x < 7) copy[x + 2][y].board = 3;
-        if (
-          copy[x + 1][y].board === rival() &&
-          x === 6 &&
-          currentPlayer === 1
-        ) {
-          copy[x + 2][y].board = 4;
+      if (x < 8 && canMove("down", x, y)) {
+        if (copy[x + 1][y].board === rival()) {
+          if (canMove("down", x + 1, y)) {
+            if (x < 7) {
+              copy[x + 2][y].board = 3; //tile is free
+            }
+            if (x === 6 && currentPlayer === 2) {
+              copy[8][y].board = 4; // winnig tile
+            }
+          } else if (canMove("right", x + 1, y) && y < 8) {
+            copy[x + 1][y + 1].board = 3; //tile is free
+          } else if (canMove("left", x + 1, y) && y > 0) {
+            copy[x + 1][y - 1].board = 3; //tile is free
+          }
+        } else {
+          if (copy[8][y].board === 0 && x === 7 && currentPlayer === 1) {
+            copy[8][y].board = 4; // winning tile
+          } else if (copy[x + 1][y].board === 0) {
+            copy[x + 1][y].board = 3; // tile is empty
+          }
         }
       }
       if (y > 0) {
@@ -170,7 +205,7 @@ const Board = () => {
     copy[x][y].board = currentPlayer;
     setBoard(copy);
 
-    emitPlay(rival());
+    emitPlay(rival(), totalWalls);
   };
 
   /**
@@ -225,11 +260,11 @@ const Board = () => {
       copy[x + 1][y].wallBoard += 1;
       copy[x + 1][y + 1].wallBoard += 1;
     }
-
+    cleanMoveTiles();
     setBoard(copy);
     setWalls(walls - 1);
     setWallToPlace(null);
-    emitPlay(rival());
+    emitPlay(rival(), totalWalls - 1);
   };
 
   return (
@@ -251,6 +286,7 @@ const Board = () => {
           )}
 
           <p>You have {walls} walls left</p>
+          <p>Rival have {totalWalls - walls} walls left</p>
 
           {winner ? <p onClick={setGame}>Rematch</p> : null}
         </Grid>

@@ -14,8 +14,8 @@ io.on("connection", (socket) => {
   conections += 1;
 
   socket.emit("hello", conections);
-  socket.on("play", ({ currentPlayer, board }) => {
-    io.emit("play", { currentPlayer, board });
+  socket.on("play", ({ currentPlayer, board, walls }) => {
+    io.emit("play", { currentPlayer, board, walls });
   });
   if (conections === 2) {
     const startTingPlayer = Math.floor(Math.random() * 2) + 1;
