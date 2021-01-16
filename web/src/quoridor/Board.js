@@ -122,6 +122,8 @@ const Board = () => {
         return ![4, 5, 6, 7, 12, 13, 14, 15].includes(board[x][y].wallBoard);
       case "right":
         return ![8, 9, 10, 11, 12, 13, 14, 15].includes(board[x][y].wallBoard);
+      default:
+        return null;
     }
   };
   /**
@@ -143,10 +145,13 @@ const Board = () => {
             if (x === 2 && currentPlayer === 2) {
               copy[x - 2][y].board = 4; // winnig tile
             }
-          } else if (canMove("right", x - 1, y) && y < 8) {
-            copy[x - 1][y + 1].board = 3; //tile is free
-          } else if (canMove("left", x - 1, y) && y > 0) {
-            copy[x - 1][y - 1].board = 3; //tile is free
+          } else {
+            if (canMove("right", x - 1, y) && y < 8) {
+              copy[x - 1][y + 1].board = 3; //tile is free
+            }
+            if (canMove("left", x - 1, y) && y > 0) {
+              copy[x - 1][y - 1].board = 3; //tile is free
+            }
           }
         } else {
           if (copy[x - 1][y].board === 0 && x === 1 && currentPlayer === 2) {
@@ -165,10 +170,13 @@ const Board = () => {
             if (x === 6 && currentPlayer === 2) {
               copy[8][y].board = 4; // winnig tile
             }
-          } else if (canMove("right", x + 1, y) && y < 8) {
-            copy[x + 1][y + 1].board = 3; //tile is free
-          } else if (canMove("left", x + 1, y) && y > 0) {
-            copy[x + 1][y - 1].board = 3; //tile is free
+          } else {
+            if (canMove("right", x + 1, y) && y < 8) {
+              copy[x + 1][y + 1].board = 3; //tile is free
+            }
+            if (canMove("left", x + 1, y) && y > 0) {
+              copy[x + 1][y - 1].board = 3; //tile is free
+            }
           }
         } else {
           if (copy[8][y].board === 0 && x === 7 && currentPlayer === 1) {
@@ -178,13 +186,41 @@ const Board = () => {
           }
         }
       }
-      if (y > 0) {
-        if (copy[x][y - 1].board === 0) copy[x][y - 1].board = 3;
-        if (copy[x][y - 1].board === rival() && y > 1) copy[x][y - 2].board = 3;
+      if (y > 0 && canMove("left", x, y)) {
+        if (copy[x][y - 1].board === rival()) {
+          if (canMove("left", x, y - 1)) {
+            if (y > 1) {
+              copy[x][y - 2].board = 3; //tile is free
+            }
+          } else {
+            if (canMove("up", x, y - 1) && x > 0) {
+              copy[x - 1][y - 1].board = 3; //tile is free
+            }
+            if (canMove("down", x, y - 1) && x < 8) {
+              copy[x + 1][y - 1].board = 3; //tile is free
+            }
+          }
+        } else {
+          if (copy[x][y - 1].board === 0) copy[x][y - 1].board = 3;
+        }
       }
-      if (y < 8) {
-        if (copy[x][y + 1].board === 0) copy[x][y + 1].board = 3;
-        if (copy[x][y + 1].board === rival() && y < 7) copy[x][y + 2].board = 3;
+      if (y < 8 && canMove("right", x, y)) {
+        if (copy[x][y - 1].board === rival()) {
+          if (canMove("right", x, y + 1)) {
+            if (y < 7) {
+              copy[x][y + 1].board = 3; //tile is free
+            }
+          } else {
+            if (canMove("up", x, y + 1) && x > 0) {
+              copy[x - 1][y + 1].board = 3; //tile is free
+            }
+            if (canMove("down", x, y + 1) && x < 8) {
+              copy[x + 1][y + 1].board = 3; //tile is free
+            }
+          }
+        } else {
+          if (copy[x][y + 1].board === 0) copy[x][y + 1].board = 3;
+        }
       }
     } else {
       cleanMoveTiles();
