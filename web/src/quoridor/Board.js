@@ -309,7 +309,7 @@ const Board = () => {
       <hr />
       <Grid container spacing={2}>
         <Grid item xs={4}>
-          {player > 2 ? (
+          {player === 0 ? (
             <p>You are a viewer</p>
           ) : (
             <p>You are the player : {player}</p>

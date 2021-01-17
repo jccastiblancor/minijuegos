@@ -10,20 +10,38 @@ const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 
 let conections = 0;
+players = { p1: false, p2: false };
+sockets_id = [-1, -1];
 io.on("connection", (socket) => {
-  conections += 1;
+  if (!players.p1) {
+    players.p1 = true;
+    socket.emit("hello", 1);
+    sockets_id[0] = socket.id;
+  } else if (!players.p2) {
+    players.p2 = true;
+    socket.emit("hello", 2);
+    sockets_id[1] = socket.id;
+  } else {
+    i = 0;
+    socket.emit("hello", 0);
+  }
 
-  socket.emit("hello", conections);
   socket.on("play", ({ currentPlayer, board, walls }) => {
     io.emit("play", { currentPlayer, board, walls });
   });
-  if (conections === 2) {
+  if (players.p1 && players.p2) {
     const startTingPlayer = Math.floor(Math.random() * 2) + 1;
     io.emit("start", startTingPlayer);
   }
 
   socket.on("disconnect", function () {
-    conections -= 1;
+    if (sockets_id[0] === socket.id) {
+      players.p1 = false;
+      sockets_id[0] = -1;
+    } else if (sockets_id[1] === socket.id) {
+      players.p2 = false;
+      sockets_id[1] = -1;
+    }
     //socket.manager.onClientDisconnect(socket.id); --> endless loop with this disconnect event on server side
     //socket.disconnect(); --> same here
   });
