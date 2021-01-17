@@ -205,7 +205,7 @@ const Board = () => {
         }
       }
       if (y < 8 && canMove("right", x, y)) {
-        if (copy[x][y - 1].board === rival()) {
+        if (copy[x][y + 1].board === rival()) {
           if (canMove("right", x, y + 1)) {
             if (y < 7) {
               copy[x][y + 1].board = 3; //tile is free
