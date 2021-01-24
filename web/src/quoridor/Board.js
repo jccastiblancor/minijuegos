@@ -22,9 +22,9 @@ const Board = () => {
     let copy = new Array(9).fill(0).map((o, i) => new Array(9).fill(0));
     for (var i = 0; i < 9; i++) {
       for (var j = 0; j < 9; j++) {
-        if (i === 4 && j === 4) {
+        if (i === 0 && j === 4) {
           copy[i][j] = { board: 1, wallBoard: 0 }; // Player 1 Tile
-        } else if (i === 4 && j === 5) {
+        } else if (i === 9 && j === 5) {
           copy[i][j] = { board: 2, wallBoard: 0 }; // Player 2 Tile
         } else {
           copy[i][j] = { board: 0, wallBoard: 0 }; // Default Tile
