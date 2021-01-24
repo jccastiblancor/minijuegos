@@ -6,6 +6,7 @@ const Tile = ({
   wallToPlace,
   placeWall,
   readyToMove,
+  previewWall,
   moveTo,
   x,
   y,
@@ -28,14 +29,29 @@ const Tile = ({
 
   const doNothing = () => {};
 
+  const tilePreviewWall = () => {
+    return (
+      <div
+        onMouseOver={() => {
+          previewWall(x, y);
+        }}
+        className={`box posible-wall ${placedWall()}`}
+        onClick={() => {
+          wallToPlace !== null ? placeWall(x, y) : doNothing();
+        }}
+      />
+    );
+  };
+
   const tileP1 = () => {
     return (
       <div
-        className={`${
-          clicked ? "clicked-tile" : null
-        } box ${wallTile()} ${placedWall()}`}
+        className={`${clicked ? "clicked-tile" : null} box ${placedWall()}`}
         onClick={() => {
           wallToPlace !== null ? placeWall(x, y) : doNothing();
+        }}
+        onMouseOver={() => {
+          previewWall(x, y);
         }}
       >
         <span
@@ -53,11 +69,12 @@ const Tile = ({
   const tileP2 = () => {
     return (
       <div
-        className={`${
-          clicked ? "clicked-tile" : null
-        } box ${wallTile()} ${placedWall()}`}
+        className={`${clicked ? "clicked-tile" : null} box ${placedWall()}`}
         onClick={() => {
           wallToPlace !== null ? placeWall(x, y) : doNothing();
+        }}
+        onMouseOver={() => {
+          previewWall(x, y);
         }}
       >
         <span
@@ -99,7 +116,10 @@ const Tile = ({
     //setClicked(false);
     return (
       <div
-        className={`box ${wallTile()} ${placedWall()}`}
+        onMouseOver={() => {
+          previewWall(x, y);
+        }}
+        className={`box ${placedWall()}`}
         onClick={() => {
           wallToPlace !== null ? placeWall(x, y) : doNothing();
         }}
@@ -168,6 +188,8 @@ const Tile = ({
       return tileMove();
     case 4:
       return tileVictory();
+    case 5:
+      return tilePreviewWall();
     default:
       return null;
   }

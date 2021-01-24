@@ -53,6 +53,11 @@
   text-align: center;
 }
 
+.posible-wall {
+  background-color: purple;
+  opacity: 0.4;
+}
+
 .select-wall {
   border-style: solid;
   border-color: yellow;

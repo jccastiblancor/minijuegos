@@ -22,9 +22,9 @@ const Board = () => {
     let copy = new Array(9).fill(0).map((o, i) => new Array(9).fill(0));
     for (var i = 0; i < 9; i++) {
       for (var j = 0; j < 9; j++) {
-        if (i === 0 && j === 4) {
+        if (i === 4 && j === 4) {
           copy[i][j] = { board: 1, wallBoard: 0 }; // Player 1 Tile
-        } else if (i === 8 && j === 4) {
+        } else if (i === 4 && j === 5) {
           copy[i][j] = { board: 2, wallBoard: 0 }; // Player 2 Tile
         } else {
           copy[i][j] = { board: 0, wallBoard: 0 }; // Default Tile
@@ -112,6 +112,59 @@ const Board = () => {
     setBoard(copy);
   };
 
+  const clearWalls = () => {
+    let copy = [...board];
+    for (var i = 0; i < copy.length; i++) {
+      for (var j = 0; j < copy.length; j++) {
+        if (copy[i][j].board === 5) copy[i][j].board = 0;
+      }
+    }
+    setBoard(copy);
+  };
+
+  const previewWall = (x, y) => {
+    clearWalls();
+    let copy = [...board];
+    switch (wallToPlace) {
+      case "vertical":
+        if (copy[x][y].board !== 1 && copy[x][y].board !== 2) {
+          copy[x][y].board = 5;
+        }
+        if (copy[x][y + 1].board !== 1 && copy[x][y + 1].board !== 2) {
+          copy[x][y + 1].board = 5;
+        }
+        if (copy[x + 1][y].board !== 1 && copy[x + 1][y].board !== 2) {
+          copy[x + 1][y].board = 5;
+        }
+        if (copy[x + 1][y + 1].board !== 1 && copy[x + 1][y + 1].board !== 2) {
+          copy[x + 1][y + 1].board = 5;
+        }
+        setBoard(copy);
+      case "horizontal":
+        if (copy[x][y].board !== 1 && copy[x][y].board !== 2) {
+          copy[x][y].board = 5;
+        }
+        if (copy[x][y + 1].board !== 1 && copy[x][y + 1].board !== 2) {
+          copy[x][y + 1].board = 5;
+        }
+        if (copy[x + 1][y].board !== 1 && copy[x + 1][y].board !== 2) {
+          copy[x + 1][y].board = 5;
+        }
+        if (copy[x + 1][y + 1].board !== 1 && copy[x + 1][y + 1].board !== 2) {
+          copy[x + 1][y + 1].board = 5;
+        }
+        setBoard(copy);
+      default:
+        return null;
+    }
+  };
+
+  /**
+   * returns true if the player can move in the given direction
+   * @param {*} direction movement direction
+   * @param {*} x x coordinate
+   * @param {*} y y coordinate
+   */
   const canMove = (direction, x, y) => {
     switch (direction) {
       case "up":
@@ -208,7 +261,7 @@ const Board = () => {
         if (copy[x][y + 1].board === rival()) {
           if (canMove("right", x, y + 1)) {
             if (y < 7) {
-              copy[x][y + 1].board = 3; //tile is free
+              copy[x][y + 2].board = 3; //tile is free
             }
           } else {
             if (canMove("up", x, y + 1) && x > 0) {
@@ -266,6 +319,7 @@ const Board = () => {
                     wallToPlace={wallToPlace}
                     placeWall={placeWall}
                     readyToMove={readyToMove}
+                    previewWall={previewWall}
                     moveTo={moveTo}
                     x={x}
                     y={y}
@@ -321,8 +375,8 @@ const Board = () => {
             <p> current player: {currentPlayer}</p>
           )}
 
-          <p>You have {walls} walls left</p>
-          <p>Rival have {totalWalls - walls} walls left</p>
+          <p>You: {walls} walls left</p>
+          <p>Rival: {totalWalls - walls} walls left</p>
 
           {winner ? (
             <p onClick={setGame} className="clickable">
