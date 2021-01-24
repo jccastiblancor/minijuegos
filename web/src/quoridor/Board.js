@@ -24,7 +24,7 @@ const Board = () => {
       for (var j = 0; j < 9; j++) {
         if (i === 0 && j === 4) {
           copy[i][j] = { board: 1, wallBoard: 0 }; // Player 1 Tile
-        } else if (i === 8 && j === 5) {
+        } else if (i === 8 && j === 4) {
           copy[i][j] = { board: 2, wallBoard: 0 }; // Player 2 Tile
         } else {
           copy[i][j] = { board: 0, wallBoard: 0 }; // Default Tile
@@ -130,28 +130,46 @@ const Board = () => {
         if (copy[x][y].board !== 1 && copy[x][y].board !== 2) {
           copy[x][y].board = 5;
         }
-        if (copy[x][y + 1].board !== 1 && copy[x][y + 1].board !== 2) {
-          copy[x][y + 1].board = 5;
+        if (y < 8) {
+          if (copy[x][y + 1].board !== 1 && copy[x][y + 1].board !== 2) {
+            copy[x][y + 1].board = 5;
+          }
         }
-        if (copy[x + 1][y].board !== 1 && copy[x + 1][y].board !== 2) {
-          copy[x + 1][y].board = 5;
+        if (x < 8) {
+          if (copy[x + 1][y].board !== 1 && copy[x + 1][y].board !== 2) {
+            copy[x + 1][y].board = 5;
+          }
         }
-        if (copy[x + 1][y + 1].board !== 1 && copy[x + 1][y + 1].board !== 2) {
-          copy[x + 1][y + 1].board = 5;
+        if (x < 8 && y < 8) {
+          if (
+            copy[x + 1][y + 1].board !== 1 &&
+            copy[x + 1][y + 1].board !== 2
+          ) {
+            copy[x + 1][y + 1].board = 5;
+          }
         }
         setBoard(copy);
       case "horizontal":
         if (copy[x][y].board !== 1 && copy[x][y].board !== 2) {
           copy[x][y].board = 5;
         }
-        if (copy[x][y + 1].board !== 1 && copy[x][y + 1].board !== 2) {
-          copy[x][y + 1].board = 5;
+        if (y < 8) {
+          if (copy[x][y + 1].board !== 1 && copy[x][y + 1].board !== 2) {
+            copy[x][y + 1].board = 5;
+          }
         }
-        if (copy[x + 1][y].board !== 1 && copy[x + 1][y].board !== 2) {
-          copy[x + 1][y].board = 5;
+        if (x < 8) {
+          if (copy[x + 1][y].board !== 1 && copy[x + 1][y].board !== 2) {
+            copy[x + 1][y].board = 5;
+          }
         }
-        if (copy[x + 1][y + 1].board !== 1 && copy[x + 1][y + 1].board !== 2) {
-          copy[x + 1][y + 1].board = 5;
+        if (x < 8 && y < 8) {
+          if (
+            copy[x + 1][y + 1].board !== 1 &&
+            copy[x + 1][y + 1].board !== 2
+          ) {
+            copy[x + 1][y + 1].board = 5;
+          }
         }
         setBoard(copy);
       default:
@@ -369,11 +387,13 @@ const Board = () => {
             <p>You are the player : {player}</p>
           )}
 
-          {winner ? (
-            <p>player {winner} wins !</p>
+          {currentPlayer === player ? (
+            <p>Your turn</p>
           ) : (
-            <p> current player: {currentPlayer}</p>
+            <p>Waiting for rival ...</p>
           )}
+
+          {winner ? <p>player {winner} wins !</p> : null}
 
           <p>You: {walls} walls left</p>
           <p>Rival: {totalWalls - walls} walls left</p>
